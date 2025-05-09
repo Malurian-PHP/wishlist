@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['middleware' => ['json.response']], function () {
-    Route::post('login', [AuthController::class, 'login'])->name('login');
+    Route::post('login', [AuthController::class, 'login'])->name('login')->middleware('verify.email.unauthenticated');
     Route::post('register', [AuthController::class, 'register'])->name('register');
 });
 

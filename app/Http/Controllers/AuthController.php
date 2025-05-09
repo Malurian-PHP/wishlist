@@ -32,14 +32,6 @@ class AuthController extends BaseController
     {
         $user = User::where('email', $request->email)->first();
 
-        if (!$user) {
-            return $this->sendError('Unauthorized', ['error' => 'User does not exist, check the email and try again.'], 401);
-        }
-
-        if ($user->email_verified_at === null) {
-            return $this->sendError('Unauthorized', ['error' => 'Please verify your email.'], 422);
-        }
-
         if (!Hash::check($request->password, $user->password)) {
             return $this->sendError('Unauthorized', ['error' => 'Password mismatch.'], 401);
         }
