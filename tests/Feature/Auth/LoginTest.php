@@ -5,14 +5,13 @@ namespace Tests\Feature\Auth;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class LoginTest extends TestCase
 {
     public function test_user_can_login()
     {
-        $this->withoutMiddleware();
-
         $user = User::factory()->create([
             'password' => bcrypt('password'),
             'email_verified_at' => now(),
@@ -22,6 +21,7 @@ class LoginTest extends TestCase
             'email' => $user->email,
             'password' => 'password',
         ]);
+        Sanctum::actingAs($user);
 
         $response->assertStatus(200);
         $response->assertJson([
@@ -35,12 +35,11 @@ class LoginTest extends TestCase
                 'token' => true,
             ],
         ]);
+        $this->assertAuthenticatedAs($user);
     }
 
     public function test_user_cannot_login_with_invalid_credentials()
     {
-        $this->withoutMiddleware();
-
         $user = User::factory()->create([
             'password' => bcrypt('password'),
             'email_verified_at' => now(),
@@ -63,8 +62,6 @@ class LoginTest extends TestCase
 
     public function test_user_cannot_login_with_unverified_email()
     {
-        $this->withoutMiddleware();
-
         $user = User::factory()->create([
             'password' => bcrypt('password'),
             'email_verified_at' => null,
