@@ -23,6 +23,8 @@ Route::group(['middleware' => ['json.response']], function () {
     Route::post('register', [AuthController::class, 'register'])->name('register');
 });
 
+// Added a middleware to verify user emails
+// middleware is registered in app/Http/Kernel.php
 Route::middleware(['auth:sanctum', 'verify.email'])->group(function () {
     Route::post('/logout', [UserController::class, 'logout'])->name('logout');
     Route::get('/user', [UserController::class, 'getUser'])->name('user');

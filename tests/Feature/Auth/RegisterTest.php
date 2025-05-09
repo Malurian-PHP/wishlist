@@ -21,6 +21,8 @@ class RegisterTest extends TestCase
         ]);
 
         $response->assertStatus(200);
+        // Check if the response has the correct structure
+        // had to decode the response to get the token and user details
         $response->assertJson([
             'success' => true,
             'message' => 'User registered successfully.',

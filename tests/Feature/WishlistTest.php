@@ -66,6 +66,7 @@ class WishlistTest extends TestCase
         ]);
 
         $response->assertStatus(200);
+        // had to decode the response to get the product name and quantity
         $response->assertJson([
             'success' => true,
             'data' => [

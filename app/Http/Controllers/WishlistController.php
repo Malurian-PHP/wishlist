@@ -20,6 +20,8 @@ class WishlistController extends BaseController
             return $this->sendError('No products in wishlist.', [], 404);
         }
 
+        // serialize the wishlist items
+        // to only include product name and price and quantity
         $wishlist->transform(function ($item) {
             return [
                 'product_name' => $item->product->name,
@@ -31,6 +33,11 @@ class WishlistController extends BaseController
         return $this->sendResponse($wishlist, 'Wishlist retrieved successfully.');
     }
 
+    //did not see a need for a separate update method
+    // since we are just updating the quantity of the product in the wishlist
+    // so we can just use the store method to handle both adding and updating the product in the wishlist
+    // if the product already exists in the wishlist, we just increment the quantity
+    // if it does not exist, we create a new entry
     public function store(WishlistRequest $request)
     {
         $user = User::find(Auth::id());
