@@ -76,127 +76,97 @@ class WishlistTest extends TestCase
         ]);
     }
 
-    // public function test_user_can_view_wishlist()
-    // {
-    //     $this->withoutMiddleware();
+    public function test_user_can_view_wishlist()
+    {
+        $this->withoutMiddleware();
 
-    //     $user = \App\Models\User::factory()->create([
-    //         'password' => bcrypt('password'),
-    //         'email_verified_at' => now(),
-    //     ]);
+        $user = \App\Models\User::factory()->create([
+            'password' => bcrypt('password'),
+            'email_verified_at' => now(),
+        ]);
 
-    //     $response = $this->actingAs($user, 'api')->getJson('/api/wishlist');
+        $this->actingAs($user, 'api')->postJson('/api/wishlist', [
+            'product_id' => 1,
+        ]);
+        $response = $this->actingAs($user, 'api')->getJson('/api/wishlist');
 
-    //     $response->assertStatus(200);
-    //     $response->assertJson([
-    //         'success' => true,
-    //         'message' => 'Wishlist retrieved successfully.',
-    //     ]);
-    // }
+        $response->assertStatus(200);
+        $response->assertJson([
+            'success' => true,
+            'message' => 'Wishlist retrieved successfully.',
+        ]);
+    }
 
-    // public function test_user_can_delete_wishlist_item()
-    // {
-    //     $this->withoutMiddleware();
+    public function test_user_can_delete_wishlist_item()
+    {
+        $this->withoutMiddleware();
 
-    //     $user = \App\Models\User::factory()->create([
-    //         'password' => bcrypt('password'),
-    //         'email_verified_at' => now(),
-    //     ]);
+        $user = \App\Models\User::factory()->create([
+            'password' => bcrypt('password'),
+            'email_verified_at' => now(),
+        ]);
 
-    //     $wishlistItem = \App\Models\Wishlist::factory()->create([
-    //         'user_id' => $user->id,
-    //         'product_id' => 1,
-    //         'quantity' => 1,
-    //         'note' => 'Test note',
-    //     ]);
+        $this->actingAs($user, 'api')->postJson('/api/wishlist', [
+            'product_id' => 1,
+        ]);
 
-    //     $response = $this->actingAs($user, 'api')->deleteJson('/api/wishlist/' . $wishlistItem->id);
+        $response = $this->actingAs($user, 'api')->postJson('/api/wishlist/remove', [
+            'product_id' => 1,
+        ]);
 
-    //     $response->assertStatus(200);
-    //     $response->assertJson([
-    //         'success' => true,
-    //         'message' => 'Wishlist item deleted successfully.',
-    //     ]);
-    // }
+        $response->assertStatus(200);
+        $response->assertJson([
+            'success' => true,
+            'data' => [],
+            'message' => 'Product removed.',
+        ]);
+    }
 
-    // public function test_user_cannot_add_product_to_wishlist_without_authentication()
-    // {
-    //     $this->withoutMiddleware();
+    public function test_user_cannot_add_product_to_wishlist_without_authentication()
+    {
+        $response = $this->postJson('/api/wishlist', [
+            'product_id' => 1,
+            'quantity' => 1,
+            'note' => 'Test note',
+        ]);
 
-    //     $response = $this->postJson('/api/wishlist', [
-    //         'product_id' => 1,
-    //         'quantity' => 1,
-    //         'note' => 'Test note',
-    //     ]);
+        $response->assertStatus(401);
+        $response->assertJson([
+            'message' => 'Unauthenticated.',
+        ]);
+    }
 
-    //     $response->assertStatus(401);
-    //     $response->assertJson([
-    //         'success' => false,
-    //         'message' => 'Unauthenticated.',
-    //     ]);
-    // }
+    public function test_user_cannot_update_wishlist_item_without_authentication()
+    {
+        $response = $this->postJson('/api/wishlist/', [
+            'quantity' => 2
+        ]);
 
-    // public function test_user_cannot_update_wishlist_item_without_authentication()
-    // {
-    //     $this->withoutMiddleware();
+        $response->assertStatus(401);
+        $response->assertJson([
+            'message' => 'Unauthenticated.',
+        ]);
+    }
 
-    //     $response = $this->putJson('/api/wishlist/1', [
-    //         'quantity' => 2,
-    //         'note' => 'Updated note',
-    //     ]);
+    public function test_user_cannot_delete_wishlist_item_without_authentication()
+    {
+        $response = $this->postJson('/api/wishlist/remove', [
+            'product_id' => 1,
+        ]);
 
-    //     $response->assertStatus(401);
-    //     $response->assertJson([
-    //         'success' => false,
-    //         'message' => 'Unauthenticated.',
-    //     ]);
-    // }
+        $response->assertStatus(401);
+        $response->assertJson([
+            'message' => 'Unauthenticated.',
+        ]);
+    }
 
-    // public function test_user_cannot_delete_wishlist_item_without_authentication()
-    // {
-    //     $this->withoutMiddleware();
+    public function test_user_cannot_view_wishlist_without_authentication()
+    {
+        $response = $this->getJson('/api/wishlist');
 
-    //     $response = $this->deleteJson('/api/wishlist/1');
-
-    //     $response->assertStatus(401);
-    //     $response->assertJson([
-    //         'success' => false,
-    //         'message' => 'Unauthenticated.',
-    //     ]);
-    // }
-
-    // public function test_user_cannot_view_wishlist_without_authentication()
-    // {
-    //     $this->withoutMiddleware();
-
-    //     $response = $this->getJson('/api/wishlist');
-
-    //     $response->assertStatus(401);
-    //     $response->assertJson([
-    //         'success' => false,
-    //         'message' => 'Unauthenticated.',
-    //     ]);
-    // }
-
-    // public function test_user_cannot_add_product_to_wishlist_with_invalid_product_id()
-    // {
-    //     $this->withoutMiddleware();
-
-    //     $user = \App\Models\User::factory()->create([
-    //         'password' => bcrypt('password'),
-    //         'email_verified_at' => now(),
-    //     ]);
-
-    //     $response = $this->actingAs($user, 'api')->postJson('/api/wishlist', [
-    //         'product_id' => 9999, // Assuming this product ID does not exist
-    //         'quantity' => 1,
-    //         'note' => 'Test note',
-    //     ]);
-
-    //     $response->assertStatus(422);
-    //     $response->assertJson([
-    //         'success' => false,
-    //         'message' => 'The selected product id is invalid.',
-    //     ]);
-    // }
+        $response->assertStatus(401);
+        $response->assertJson([
+            'message' => 'Unauthenticated.',
+        ]);
+    }
 }
