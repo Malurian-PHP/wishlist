@@ -169,4 +169,27 @@ class WishlistTest extends TestCase
             'message' => 'Unauthenticated.',
         ]);
     }
+
+    public function test_user_cannot_add_product_to_wishlist_with_invalid_product_id()
+    {
+        $this->withoutMiddleware();
+
+        $user = \App\Models\User::factory()->create([
+            'password' => bcrypt('password'),
+            'email_verified_at' => now(),
+        ]);
+
+        $response = $this->actingAs($user, 'api')->postJson('/api/wishlist', [
+            'product_id' => 9999, // Assuming this product ID does not exist
+            'quantity' => 1
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJson([
+            'message' => 'Product ID does not exist in the database.',
+            'errors' => [
+                'product_id' => ['Product ID does not exist in the database.'],
+            ],
+        ]);
+    }
 }
