@@ -8,8 +8,10 @@
 6. Use API endpoints:
    - POST /api/register - Register new user
    - POST /api/login - Login user
+
+   Routes below require Authorization | Authorization: `Bearer <token>`
    - POST /api/logout - Logout user
-   - GET /api/user - Authenticated user | Authorization: `Bearer <token>`
+   - GET /api/user - Authenticated user
    - GET /api/products - Gets all products
    - GET /api/wishlist - Get user's wishlist
    - POST /api/wishlist - Add product to wishlist/also updates wishlist product quantity
