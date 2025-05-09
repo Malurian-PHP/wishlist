@@ -74,11 +74,7 @@ class LoginTest extends TestCase
 
         $response->assertStatus(422);
         $response->assertJson([
-            'success' => false,
-            'message' => 'Unauthorized',
-            'data' => [
-                'error' => 'Please verify your email.',
-            ]
+            'error' => 'Please verify your email.'
         ]);
     }
 }
